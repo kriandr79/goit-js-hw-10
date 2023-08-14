@@ -1,5 +1,6 @@
 import Notiflix from 'notiflix';
 import SlimSelect from 'slim-select';
+import 'slim-select/dist/slimselect.css';
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
 
 const refs = {
@@ -20,7 +21,7 @@ fetchBreeds()
   .then(data => {
     hideElement(refs.loaderEl);
     hideElement(refs.errorEl);
-    
+
     refs.selectEl.innerHTML = createCatListMarkup(data);
     showElement(refs.selectEl);
     

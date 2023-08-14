@@ -12,6 +12,9 @@ h1 {
 p {
   margin: 8px;
 }
+.breed-select {
+  width: 300px;
+}
 .cat-info {
     max-width: 400px;
     margin: 20px;
