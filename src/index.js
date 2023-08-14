@@ -1,4 +1,5 @@
 import Notiflix from 'notiflix';
+import SlimSelect from 'slim-select';
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
 
 const refs = {
@@ -10,41 +11,50 @@ const refs = {
 
 refs.selectEl.addEventListener('change', onSelectChange);
 
-// Невідображається елементи селекту та помилки
-toggleClass(refs.selectEl);
-toggleClass(refs.errorEl);
+// За замовченням невідображається елементи селекту та помилки
+hideElement(refs.selectEl);
+hideElement(refs.errorEl);
 
 // Завантаження списку порід котів
 fetchBreeds()
   .then(data => {
+    hideElement(refs.loaderEl);
+    hideElement(refs.errorEl);
+    
     refs.selectEl.innerHTML = createCatListMarkup(data);
-    toggleClass(refs.selectEl);
-    toggleClass(refs.loaderEl);
+    showElement(refs.selectEl);
+    
+    new SlimSelect({
+      select: refs.selectEl,
+    });
+
   })
   .catch(error => {
-    toggleClass(refs.loaderEl);
-    toggleClass(refs.errorEl);
+    hideElement(refs.loaderEl);
+    showElement(refs.errorEl);
   });
 
-// Функція вибору кота 
+// Функція вибору кота
 function onSelectChange(e) {
   // для проби
   Notiflix.Notify.info('Loading data, please wait...', {
     timeout: 1000,
   });
 
-  toggleClass(refs.loaderEl);
-  toggleClass(refs.catInfoEl);
+  showElement(refs.loaderEl);
+  hideElement(refs.catInfoEl);
 
   fetchCatByBreed(e.currentTarget.value)
     .then(data => {
+      hideElement(refs.loaderEl);
+      hideElement(refs.errorEl);
+
       refs.catInfoEl.innerHTML = createCatSampleMarkup(data[0]);
-      toggleClass(refs.catInfoEl);
-      toggleClass(refs.loaderEl);
+      showElement(refs.catInfoEl);
     })
     .catch(error => {
-      toggleClass(refs.loaderEl);
-      toggleClass(refs.errorEl);
+      hideElement(refs.loaderEl);
+      showElement(refs.errorEl);
     });
 }
 
@@ -59,6 +69,10 @@ function createCatSampleMarkup(arr) {
   return `<img src="${url}" width="400" alt="${breeds[0].name}"/><h1>${breeds[0].name}</h1><p>${breeds[0].description}</p><p><b>Temperament:</b><p>${breeds[0].temperament}</p>`;
 }
 
-function toggleClass(element) {
-  element.classList.toggle('is-hidden');
+function showElement(element) {
+  element.classList.remove('is-hidden');
+}
+
+function hideElement(element) {
+  element.classList.add('is-hidden');
 }
